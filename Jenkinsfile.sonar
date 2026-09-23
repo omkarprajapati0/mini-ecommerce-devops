@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Maven Build and Tests') {
+            steps {
+                bat 'mvn -B clean verify'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    bat 'mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.1.6619:sonar -Dsonar.projectKey=mini-ecommerce-devops'
+                }
+            }
+        }
+    }
+}
